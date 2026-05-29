@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KP // TERMINAL</title>
+    <style>
+        :root {
+            --bg: #000000;
+            --pnl: #111111;
+            --org: #ff5722;
+            --grn: #00ff66;
+            --txt: #ffffff;
+            --dim: #888888;
+            --brd: 3px solid #ff5722;
+            --thk: 5px solid #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--txt);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        aside {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 260px;
+            background-color: var(--pnl);
+            border-right: var(--brd);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            z-index: 100;
+        }
+        
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .nav-menu a {
+            color: var(--txt);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 8px 12px;
+            border-left: 4px solid transparent;
+            transition: all 0.2s steps(4);
+        }
+
+        .nav-menu a:hover {
+            background-color: var(--org);
+            color: var(--bg);
+            border-left: 4px solid var(--txt);
+            padding-left: 20px;
+        }
+
+        .terminal-meta {
+            font-size: 0.75rem;
+            color: var(--dim);
+        }
+
+        main {
+            margin-left: 260px;
+            flex: 1;
+            padding: 40px;
+            max-width: 1260px;
+            width: 100%;
+        }
+
+        .panel-block {
+            background-color: var(--pnl);
+            border: var(--thk);
+            padding: 45px;
+            margin-bottom: 60px;
+            box-shadow: 12px 12px 0px var(--org);
+            position: relative;
+        }
+
+        .panel-heading {
+            font-size: 2rem;
+            text-transform: uppercase;
+            color: var(--txt);
+            margin-bottom: 25px;
+            background: var(--bg);    
+            display: inline-block;
+            padding: 0px 15px;
+            border: 2px solid var(--dim);
+        }
+
+        .hero-banner {
+            margin-top: 40px;
+            margin-bottom: 60px;
+        }
+
+        .hero-banner h2 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        mark {
+            background-color: var(--org);
+            color: var(--bg);
+            padding: 0 5px;
+        }
+
+        .console-text {
+            color: var(--grn);
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            word-break: break-word;
+        }
+
+        .action-trigger {
+            display: inline-block;
+            background-color: var(--txt);
+            color: var(--bg);
+            text-decoration: none;
+            padding: 15px 30px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: 3px solid var(--org);
+            cursor: pointer;
+            transition: transform 0.1s;
+            text-align: center;
+        }
+
+        .identity-wrapper {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+
+        .profile-pic {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border: 3px solid var(--org);
+            box-shadow: 6px 6px 0px var(--txt);
+            background-color: #222;
+            flex-shrink: 0;
+        }
+
+        .stack-row {
+            border-bottom: 2px solid var(--dim);
+            padding: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stack-label {
+            font-weight: bold;
+            color: var(--org);
+            min-width: 200px;
+        }
+
+        .stack-value {
+            word-break: break-word;
+            text-align: right;
+        }
+
+        .block-item {
+            border: 3px dashed var(--txt);
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: border-style 0.2s;
+        }
+
+        .block-item h3 {
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .block-item p {
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+
+        .link-embed {
+            color: var(--grn);
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            word-break: break-all;
+        }
+
+        .link-embed:hover {
+            text-decoration: underline;
+        }
+
+        .mobile-bar {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--pnl);
+            padding: 15px 20px;
+            border-bottom: var(--brd);
+            z-index: 200;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-bar h1 {
+            color: var(--org);
+            font-size: 1.2rem;
+        }
+
+        .mobile-bar button {
+            background: var(--org);
+            color: var(--bg);
+            border: none;
+            padding: 6px 12px;
+            font-family: monospace;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Responsive Breakpoint */
+        @media (max-width: 992px) {
+            body {
+                flex-direction: column;
+            }
+
+            .mobile-bar {
+                display: flex;
+            }
+
+            aside {
+                width: 100%;
+                height: auto;
+                max-height: calc(100vh - 55px);
+                position: fixed;
+                top: 55px;
+                left: 0;
+                right: 0;
+                bottom: auto;
+                border-right: none;
+                border-bottom: var(--brd);
+                display: none;
+                padding: 30px;
+                flex-direction: column;
+                gap: 30px;
+                overflow-y: auto;
+            }
+
+            /* Toggle State via JS */
+            aside.visible {
+                display: flex;
+            }
+
+            main {
+                margin-left: 0;
+                padding: 90px 20px 40px 20px; /* Top padding clears mobile bar */
+            }
+
+            .hero-banner h2 {
+                font-size: 2.3rem;
+            }
+
+            .panel-block {
+                padding: 25px 20px;
+                margin-bottom: 40px;
+                box-shadow: 6px 6px 0px var(--org);
+            }
+
+            .panel-heading {
+                font-size: 1.4rem;
+                margin-bottom: 20px;
+            }
+
+            .identity-wrapper {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .profile-pic {
+                width: 160px;
+                height: 160px;
+            }
+
+            .stack-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .stack-value {
+                text-align: left;
+            }
+            
+            .action-trigger {
+                width: 100%;
+            }
+        }
+    </style>
+    <script>
+        function toggleTerminalMenu() {
+            const sidebar = document.getElementById('terminalSidebar');
+            if (window.innerWidth <= 992) {
+                sidebar.classList.toggle('visible');
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div class="mobile-bar">
+        <h1>KP // SYS</h1>
+        <button onclick="toggleTerminalMenu()">[MENU]</button>
+    </div>
+
+    <aside id="terminalSidebar">
+        <div class="terminal-identity">
+            <h1>KHUSH PATEL</h1>
+            <div class="terminal-status" style="color: var(--grn); font-weight: bold; margin-top: 5px;">● SYSTEM_ONLINE</div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="#console" onclick="toggleTerminalMenu()">HOME</a>
+            <a href="#identity" onclick="toggleTerminalMenu()">IDENTITY</a>
+            <a href="#stack" onclick="toggleTerminalMenu()">TECH_STACK</a>
+            <a href="#deployments" onclick="toggleTerminalMenu()">WORK_LOG</a>
+            <a href="#terminal-end" onclick="toggleTerminalMenu()">CONNECT</a>
+        </nav>
+
+        <div class="terminal-meta">
+            <p>LOC: VAPI.IN</p>
+            <p>@NMIMS SHIRPUR</p>
+        </div>
+    </aside>
+
+    <main>
+        
+        <section id="console" class="hero-banner">
+            <h2>SYS_INIT:<br>I AM <mark>KHUSH PATEL</mark></h2>
+            <p class="console-text">&gt; FULL_STACK_ENGINEER_ // SOFTWARE_DEVELOPER_</p>
+            <a href="#terminal-end" class="action-trigger">EXECUTE_CONNECTION</a>
+        </section>
+
+        <div class="panel-block" id="identity">
+            <div class="panel-heading">IDENTITY_LOG</div>
+            <div class="identity-wrapper">
+                <img src="khush.jpeg" alt="Khush Patel" class="profile-pic">
+                <div class="intro-summary">
+                    <p>I am a computer engineering student focused on building robust, reliable applications. I spend most of my time implementing clean backend logic, tackling complex programming challenges, and optimizing core algorithms using C++.</p>
+                    <br>
+                    <p>Instead of relying on basic layout modifications, I enjoy solving deep procedural and architectural structural questions. Whether implementing multi-threaded solutions in Java, handling backend logic in Node.js, or building efficient database structures in MySQL, I ensure the application base runs smoothly and handles scale effectively.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-block" id="stack">
+            <div class="panel-heading">STACK_CAPABILITIES</div>
+            <div class="linear-stack">
+                <div class="stack-row">
+                    <div class="stack-label">ENGINEERING_CORE</div>
+                    <div class="stack-value">C++ / JAVA CORE / PYTHON</div>
+                </div>
+                <div class="stack-row">
+                    <div class="stack-label">FRONTEND_COMPILING</div>
+                    <div class="stack-value">HTML5 / CSS ARCHITECTURE / JS (ES6+) / TAILWIND</div>
+                </div>
+                <div class="stack-row">
+                    <div class="stack-label">SYSTEM_RELIABILITY</div>
+                    <div class="stack-value">NODE.JS / EXPRESS / SWING GUI / FLASK</div>
+                </div>
+                <div class="stack-row">
+                    <div class="stack-label">DATA_RELATIONAL</div>
+                    <div class="stack-value">MYSQL ENGINE / R-STUDIO / POWER BI</div>
+                </div>
+                <div class="stack-row">
+                    <div class="stack-label">VERSION_CONTROL</div>
+                    <div class="stack-value">GIT CORE / GITHUB REMOTE WORKFLOWS</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-block" id="deployments">
+            <div class="panel-heading">RECORDED_DEPLOYMENTS</div>
+            
+            <div class="block-item">
+                <h3>[DEPLOYMENT_01] AUTOMATED LEAVE TRACKER</h3>
+                <p>An enterprise-grade hostel clearance portal created to bypass traditional manual approval latencies. Features algorithmic verification mechanics and high-contrast analytical panels.</p>
+                <a href="https://harsh-2111.github.io/hk-final-nm-leave/" class="link-embed">[INITIALIZE_LIVE_TARGET]</a>
+            </div>
+
+            <div class="block-item">
+                <h3>[DEPLOYMENT_02] SECURE MEDICAL BIT-WALLET</h3>
+                <p>A rural full-stack data vault built for swift clinical registry indexing. Leverages normalized relational schemas optimized to handle heavy concurrent request pipelines safely.</p>
+                <a href="https://seva-health-project.github.io/seva-health/" class="link-embed">[PULL_REMOTE_REPOSITORY]</a>
+            </div>
+        </div>
+
+        <div class="panel-block" id="terminal-end">
+            <div class="panel-heading">ACCESS_CHANNELS</div>
+            <p class="console-text" style="margin-bottom: 20px;">&gt; CHANNELS CHOSEN FOR IMMEDIATE COMMUNICATION:</p>
+            <div class="linear-stack" style="margin-bottom: 35px;">
+                <div class="stack-row">
+                    <div class="stack-label">E_MAIL</div>
+                    <div class="stack-value">khushpatel200614@gmail.com</div>
+                </div>
+                <div class="stack-row">
+                    <div class="stack-label">PHONE_NO</div>
+                    <div class="stack-value">+91 7990825318</div>
+                </div>
+                <div class="stack-row">
+                    <div class="stack-label">GEOLOCATION</div>
+                    <div class="stack-value">VAPI, GUJARAT, INDIA</div>
+                </div>
+            </div>
+            <a href="Khush_Patel_Resume.docx" download class="action-trigger">DOWNLOAD_RESUME.DOCX</a>
+        </div>
+
+    </main>
+</body>
+</html>
